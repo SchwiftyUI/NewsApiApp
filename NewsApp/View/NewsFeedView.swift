@@ -28,7 +28,7 @@ struct NewsListItemView: View {
         VStack(alignment: .leading) {
             Text("\(article.title)")
                 .font(.headline)
-            Text("\(article.author)")
+            Text("\(article.author ?? "No Author")")
                 .font(.subheadline)
         }
         .padding()

@@ -81,39 +81,36 @@ class NewsFeed: ObservableObject, RandomAccessCollection {
     }
     
     func parseArticlesFromData(data: Data) -> [NewsListItem] {
-        let jsonObject = try! JSONSerialization.jsonObject(with: data)
-        let topLevelMap = jsonObject as! [String: Any]
-        guard topLevelMap["status"] as? String == "ok" else {
-            print("Status returned was not OK")
-            return []
-        }
-        guard let jsonArticles = topLevelMap["articles"] as? [[String: Any]] else {
-            print("No articles found")
+        var response: NewsApiResponse
+        do {
+            response = try JSONDecoder().decode(NewsApiResponse.self, from: data)
+        } catch {
+            print("Error parsing the JSON: \(error)")
             return []
         }
         
-        var newArticles = [NewsListItem]()
-        for jsonArticle in jsonArticles {
-            guard let title = jsonArticle["title"] as? String else {
-                continue
-            }
-            guard let author = jsonArticle["author"] as? String else {
-                continue
-            }
-            newArticles.append(NewsListItem(title: title, author: author))
+        if response.status != "ok" {
+            print("Status is not ok: \(response.status)")
+            return []
         }
-        return newArticles
+        
+        return response.articles ?? []
     }
 }
 
-class NewsListItem: Identifiable {
+class NewsApiResponse: Codable {
+    var status: String
+    var articles: [NewsListItem]?
+}
+
+class NewsListItem: Identifiable, Codable {
     var uuid = UUID()
     
-    var author: String
+    var author: String?
     var title: String
     
-    init(title: String, author: String) {
-        self.title = title
-        self.author = author
+    enum CodingKeys: String, CodingKey {
+        case author = "author"
+        case title = "title"
     }
 }
