@@ -15,9 +15,7 @@ class NewsFeed: ObservableObject, RandomAccessCollection {
     
     var startIndex: Int { newsListItems.startIndex }
     var endIndex: Int { newsListItems.endIndex }
-    var nextPageToLoad = 1
-    var currentlyLoading = false
-    var doneLoading = false
+    var loadStatus = LoadStatus.ready(nextPage: 1)
     
     var urlBase = "https://newsapi.org/v2/everything?q=apple&apiKey=6ffeaceffa7949b68bf9d68b9f06fd33&language=en&page="
     
@@ -34,19 +32,18 @@ class NewsFeed: ObservableObject, RandomAccessCollection {
         if !shouldLoadMoreData(currentItem: currentItem) {
             return
         }
-        currentlyLoading = true
+        guard case let .ready(page) = loadStatus else {
+            return
+        }
+        loadStatus = .loading(page: page)
+        let urlString = "\(urlBase)\(page)"
         
-        let urlString = "\(urlBase)\(nextPageToLoad)"
         let url = URL(string: urlString)!
         let task = URLSession.shared.dataTask(with: url, completionHandler: parseArticlesFromResponse(data:response:error:))
         task.resume()
     }
     
     func shouldLoadMoreData(currentItem: NewsListItem? = nil) -> Bool {
-        if currentlyLoading || doneLoading {
-            return false
-        }
-        
         guard let currentItem = currentItem else {
             return true
         }
@@ -62,21 +59,26 @@ class NewsFeed: ObservableObject, RandomAccessCollection {
     func parseArticlesFromResponse(data: Data?, response: URLResponse?, error: Error?) {
         guard error == nil else {
             print("Error: \(error!)")
-            currentlyLoading = false
+            loadStatus = .parseError
             return
         }
         guard let data = data else {
             print("No data found")
-            currentlyLoading = false
+            loadStatus = .parseError
             return
         }
         
         let newArticles = parseArticlesFromData(data: data)
         DispatchQueue.main.async {
             self.newsListItems.append(contentsOf: newArticles)
-            self.nextPageToLoad += 1
-            self.currentlyLoading = false
-            self.doneLoading = (newArticles.count == 0)
+            if newArticles.count == 0 {
+                self.loadStatus = .done
+            } else {
+                guard case let .loading(page) = self.loadStatus else {
+                    fatalError("loadSatus is in a bad state")
+                }
+                self.loadStatus = .ready(nextPage: page + 1)
+            }
         }
     }
     
@@ -96,6 +98,13 @@ class NewsFeed: ObservableObject, RandomAccessCollection {
         
         return response.articles ?? []
     }
+    
+    enum LoadStatus {
+        case ready (nextPage: Int)
+        case loading (page: Int)
+        case parseError
+        case done
+    }
 }
 
 class NewsApiResponse: Codable {
@@ -110,7 +119,6 @@ class NewsListItem: Identifiable, Codable {
     var title: String
     
     enum CodingKeys: String, CodingKey {
-        case author = "author"
-        case title = "title"
+        case author, title
     }
 }
