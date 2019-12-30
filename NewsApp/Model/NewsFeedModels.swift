@@ -117,8 +117,9 @@ class NewsListItem: Identifiable, Codable {
     
     var author: String?
     var title: String
+    var urlToImage: String?
     
     enum CodingKeys: String, CodingKey {
-        case author, title
+        case author, title, urlToImage
     }
 }
