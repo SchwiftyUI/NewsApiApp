@@ -12,16 +12,31 @@ struct NewsFeedView: View {
     @ObservedObject var newsFeed = NewsFeed()
     
     var body: some View {
-        List(newsFeed) { (article: NewsListItem) in
-            NewsListItemView(article: article)
-                .onAppear {
-                    self.newsFeed.loadMoreArticles(currentItem: article)
+        NavigationView {
+            List(newsFeed) { (article: NewsListItem) in
+                NavigationLink(destination: NewsListItemView(article: article)) {
+                    NewsListItemListView(article: article)
+                        .onAppear {
+                            self.newsFeed.loadMoreArticles(currentItem: article)
+                    }
+                }
             }
+        .navigationBarTitle("Apple News")
         }
     }
 }
 
 struct NewsListItemView: View {
+    var article: NewsListItem
+    
+    var body: some View {
+        UrlWebView(urlToDisplay: URL(string: article.url)!)
+            .edgesIgnoringSafeArea(.all)
+            .navigationBarTitle(article.title)
+    }
+}
+
+struct NewsListItemListView: View {
     var article: NewsListItem
     
     var body: some View {
