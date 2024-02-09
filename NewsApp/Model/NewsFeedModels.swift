@@ -6,10 +6,6 @@
 //  Copyright © 2019 SchwiftyUI. All rights reserved.
 //
 
-func createDefaultFetch() {
-    print("ok")
-}
-
 import Foundation
 
 class NewsFeed: ObservableObject, RandomAccessCollection {

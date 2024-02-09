@@ -36,6 +36,7 @@
 		DEE6DDDB23A203B80050FE29 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DEE6DDE223A203E10050FE29 /* NewsFeedModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedModels.swift; sourceTree = "<group>"; };
 		DEE6DDE523A204F40050FE29 /* NewsFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedView.swift; sourceTree = "<group>"; };
+		F712A03C2B767AAD005C7B88 /* Practice.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Practice.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +77,7 @@
 		DEE6DDCC23A203B70050FE29 /* NewsApp */ = {
 			isa = PBXGroup;
 			children = (
+				F712A03B2B767A85005C7B88 /* Playground */,
 				DE19321C23B96A93003E548E /* Resource */,
 				DEE6DDE423A204E70050FE29 /* View */,
 				DEE6DDE123A203CF0050FE29 /* Model */,
@@ -115,6 +117,14 @@
 				DE346C8424956A5600CB27C9 /* UrlWebView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		F712A03B2B767A85005C7B88 /* Playground */ = {
+			isa = PBXGroup;
+			children = (
+				F712A03C2B767AAD005C7B88 /* Practice.playground */,
+			);
+			path = Playground;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
